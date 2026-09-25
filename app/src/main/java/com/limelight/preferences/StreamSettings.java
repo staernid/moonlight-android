@@ -2,9 +2,11 @@ package com.limelight.preferences;
 
 import static com.limelight.utils.ServerHelper.getActiveDisplay;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.MediaCodecInfo;
@@ -335,6 +337,21 @@ public class StreamSettings extends AppCompatActivity {
         public void initializePreferences() {
             addPreferencesFromResource(R.xml.preferences);
             PreferenceScreen screen = getPreferenceScreen();
+
+            // Check for GLES 3.1 support (Required for advanced upscaling features like textureGather)
+            ActivityManager activityManager = (ActivityManager) requireActivity().getSystemService(Context.ACTIVITY_SERVICE);
+            ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+            boolean supportsGles31 = configurationInfo.reqGlEsVersion >= 0x30001;
+
+            // Handle Video Super Resolution checkbox
+            CheckBoxPreference videoSrPref = (CheckBoxPreference) findPreference("checkbox_video_sr");
+            if (videoSrPref != null) {
+                if (!supportsGles31) {
+                    // Disable and gray out if GLES 3.1 is not available
+                    videoSrPref.setEnabled(false);
+                    videoSrPref.setSummary(videoSrPref.getSummary() + " (Requires GLES 3.1)");
+                }
+            }
 
             AppCompatActivity activity = (AppCompatActivity) requireActivity();
             PackageManager pm = activity.getPackageManager();

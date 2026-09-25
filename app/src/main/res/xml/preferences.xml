@@ -64,6 +64,12 @@
         android:title="@string/title_low_latency_frame_balance"
         android:summary="@string/summary_low_latency_frame_balance"
         app:iconSpaceReserved="false" />
+        <CheckBoxPreference
+            android:key="checkbox_video_sr"
+            android:title="@string/title_video_sr"
+            android:summary="@string/summary_video_sr"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <CheckBoxPreference
             android:defaultValue="false"
